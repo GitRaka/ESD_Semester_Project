@@ -1,0 +1,3 @@
+Layer Pairs Export File for PCB: C:\Users\Jerome\OneDrive - UCB-O365\ECEN5613_ESD\Project.git\Schematics\PowerBoard\Buck-Boost Power Board\BuckBoostPCB.PcbDoc
+LayersSetName=Top_Bot_Thru_Holes|DrillFile=buckboostpcb-roundholes.txt|DrillLayers=gtl,gbl
+LayersSetName=Top_Bot_Slot_Holes|DrillFile=buckboostpcb-slotholes.txt|DrillLayers=gtl,gbl
