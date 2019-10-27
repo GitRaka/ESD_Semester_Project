@@ -28,7 +28,7 @@ DItemRevisionGUID=
 ReportSuppressedErrorsInMessages=0
 FSMCodingStyle=eFMSDropDownList_OneProcess
 FSMEncodingStyle=eFMSDropDownList_OneHot
-OutputPath=
+OutputPath=Project Outputs for Buck-Boost Power Board
 LogFolderPath=
 ManagedProjectGUID=
 IncludeDesignInRelease=0
@@ -173,7 +173,80 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=LUDPLCTG
 
+[Document9]
+DocumentPath=BuckBoost.OutJob
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=
+
 [GeneratedDocument1]
+DocumentPath=Project Outputs for Buck-Boost Power Board\Reports\BOM\Bill of Materials-Bridge.pdf
+DItemRevisionGUID=
+
+[GeneratedDocument2]
+DocumentPath=Project Outputs for Buck-Boost Power Board\Reports\Gerber\BuckBoostPCB.EXTREP
+DItemRevisionGUID=
+
+[GeneratedDocument3]
+DocumentPath=Project Outputs for Buck-Boost Power Board\Reports\Gerber\BuckBoostPCB.GBL
+DItemRevisionGUID=
+
+[GeneratedDocument4]
+DocumentPath=Project Outputs for Buck-Boost Power Board\Reports\Gerber\BuckBoostPCB.GBO
+DItemRevisionGUID=
+
+[GeneratedDocument5]
+DocumentPath=Project Outputs for Buck-Boost Power Board\Reports\Gerber\BuckBoostPCB.GBP
+DItemRevisionGUID=
+
+[GeneratedDocument6]
+DocumentPath=Project Outputs for Buck-Boost Power Board\Reports\Gerber\BuckBoostPCB.GBS
+DItemRevisionGUID=
+
+[GeneratedDocument7]
+DocumentPath=Project Outputs for Buck-Boost Power Board\Reports\Gerber\BuckBoostPCB.GD1
+DItemRevisionGUID=
+
+[GeneratedDocument8]
+DocumentPath=Project Outputs for Buck-Boost Power Board\Reports\Gerber\BuckBoostPCB.GG1
+DItemRevisionGUID=
+
+[GeneratedDocument9]
+DocumentPath=Project Outputs for Buck-Boost Power Board\Reports\Gerber\BuckBoostPCB.GTL
+DItemRevisionGUID=
+
+[GeneratedDocument10]
+DocumentPath=Project Outputs for Buck-Boost Power Board\Reports\Gerber\BuckBoostPCB.GTO
+DItemRevisionGUID=
+
+[GeneratedDocument11]
+DocumentPath=Project Outputs for Buck-Boost Power Board\Reports\Gerber\BuckBoostPCB.GTP
+DItemRevisionGUID=
+
+[GeneratedDocument12]
+DocumentPath=Project Outputs for Buck-Boost Power Board\Reports\Gerber\BuckBoostPCB.GTS
+DItemRevisionGUID=
+
+[GeneratedDocument13]
+DocumentPath=Project Outputs for Buck-Boost Power Board\Reports\Gerber\BuckBoostPCB.REP
+DItemRevisionGUID=
+
+[GeneratedDocument14]
+DocumentPath=Project Outputs for Buck-Boost Power Board\Reports\Gerber\BuckBoostPCB.RUL
+DItemRevisionGUID=
+
+[GeneratedDocument15]
 DocumentPath=Project Outputs for Buck-Boost Power Board\Design Rule Check - BuckBoostPCB.html
 DItemRevisionGUID=
 
@@ -186,6 +259,9 @@ Variant=[No Variations]
 OutputJobsCount=0
 ContentTypeGUID=CB6F2064-E317-11DF-B822-12313F0024A2
 ConfigurationType=Source
+
+[Generic_EDE]
+OutputDir=Project Outputs for Buck-Boost Power Board
 
 [OutputGroup1]
 Name=Netlist Outputs

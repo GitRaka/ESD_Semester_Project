@@ -1,0 +1,22 @@
+Output: Gerber Files
+Type  : Gerber
+From  : Variant [[No Variations]] of PCB Document [BuckBoostPCB.PcbDoc]
+   Generated File[BuckBoostPCB.GTO]
+   Generated File[BuckBoostPCB.GTP]
+   Generated File[BuckBoostPCB.GTS]
+   Generated File[BuckBoostPCB.GTL]
+   Generated File[BuckBoostPCB.GBL]
+   Generated File[BuckBoostPCB.GBS]
+   Generated File[BuckBoostPCB.GBP]
+   Generated File[BuckBoostPCB.GBO]
+   Generated File[BuckBoostPCB.GD1]
+   Generated File[BuckBoostPCB.GG1]
+   Generated File[BuckBoostPCB.RUL]
+   Generated File[BuckBoostPCB.EXTREP]
+   Generated File[BuckBoostPCB.REP]
+
+
+Files Generated   : 13
+Documents Printed : 0
+
+Finished Output Generation At 11:19:33 AM On 10/27/2019
