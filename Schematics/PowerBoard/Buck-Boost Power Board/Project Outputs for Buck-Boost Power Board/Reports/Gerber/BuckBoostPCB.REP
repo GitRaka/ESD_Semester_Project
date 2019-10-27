@@ -2,59 +2,20 @@
 FileName = BuckBoostPCB.GBR
 AutoAperture = True
 *************************************************************
-Generating : Drill Drawing
-      File : BuckBoostPCB.GD1
-
-    Adding Drill Pair : Top Layer-Bottom Layer
-
-    Adding Layer      : Drill Drawing
-
-
-Used DCodes :
-    D69
-    D70
-*************************************************************
-
-*************************************************************
-Generating : Drill Guide
-      File : BuckBoostPCB.GG1
-
-    Adding Drill Pair : Top Layer-Bottom Layer
-
-    Adding Layer      : Drill Guide
-
-
-Used DCodes :
-    D69
-*************************************************************
-
-*************************************************************
-Generating : Bottom Paste
-      File : BuckBoostPCB.GBP
-
-    Adding Layer      : Bottom Paste
-
-    Adding Layer      : Bottom Layer
-
-    Adding Layer      : Multi-Layer
-
-
-Used DCodes :
-*************************************************************
-
-*************************************************************
 Generating : Bottom Solder
       File : BuckBoostPCB.GBS
 
     Adding Layer      : Bottom Solder
 
+    Adding Layer      : Mechanical 1
+
     Adding Layer      : Bottom Layer
 
     Adding Layer      : Multi-Layer
 
 
 Used DCodes :
-    D49
+    D19
     D50
     D51
     D52
@@ -62,35 +23,7 @@ Used DCodes :
     D54
     D55
     D56
-*************************************************************
-
-*************************************************************
-Generating : Top Paste
-      File : BuckBoostPCB.GTP
-
-    Adding Layer      : Top Paste
-
-    Adding Layer      : Top Layer
-
-    Adding Layer      : Multi-Layer
-
-
-Used DCodes :
-    D19
-    D20
-    D21
-    D22
-    D23
-    D24
-    D25
-    D26
-    D27
-    D28
-    D29
-    D30
-    D31
-    D32
-    D33
+    D57
 *************************************************************
 
 *************************************************************
@@ -99,13 +32,15 @@ Generating : Top Solder
 
     Adding Layer      : Top Solder
 
+    Adding Layer      : Mechanical 1
+
     Adding Layer      : Top Layer
 
     Adding Layer      : Multi-Layer
 
 
 Used DCodes :
-    D34
+    D19
     D35
     D36
     D37
@@ -128,11 +63,29 @@ Used DCodes :
     D54
     D55
     D56
+    D57
 *************************************************************
 
 *************************************************************
-Generating : Bottom Layer
-      File : BuckBoostPCB.GBL
+Generating : Mechanical 1
+      File : BuckBoostPCB.GM1
+
+    Adding Layer      : Mechanical 1
+
+    Adding Layer      : Mechanical 1
+
+
+Used DCodes :
+    D19
+*************************************************************
+
+*************************************************************
+Generating : Bottom Paste
+      File : BuckBoostPCB.GBP
+
+    Adding Layer      : Bottom Paste
+
+    Adding Layer      : Mechanical 1
 
     Adding Layer      : Bottom Layer
 
@@ -140,21 +93,16 @@ Generating : Bottom Layer
 
 
 Used DCodes :
-    D59
-    D60
-    D61
-    D62
-    D63
-    D64
-    D65
-    D66
-    D67
-    D68
+    D19
 *************************************************************
 
 *************************************************************
-Generating : Top Layer
-      File : BuckBoostPCB.GTL
+Generating : Top Paste
+      File : BuckBoostPCB.GTP
+
+    Adding Layer      : Top Paste
+
+    Adding Layer      : Mechanical 1
 
     Adding Layer      : Top Layer
 
@@ -177,9 +125,22 @@ Used DCodes :
     D31
     D32
     D33
-    D57
-    D58
-    D59
+    D34
+*************************************************************
+
+*************************************************************
+Generating : Bottom Layer
+      File : BuckBoostPCB.GBL
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Mechanical 1
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D19
     D60
     D61
     D62
@@ -189,6 +150,7 @@ Used DCodes :
     D66
     D67
     D68
+    D69
 *************************************************************
 
 *************************************************************
@@ -197,8 +159,11 @@ Generating : Bottom Overlay
 
     Adding Layer      : Bottom Overlay
 
+    Adding Layer      : Mechanical 1
+
 
 Used DCodes :
+    D19
 *************************************************************
 
 *************************************************************
@@ -206,6 +171,8 @@ Generating : Top Overlay
       File : BuckBoostPCB.GTO
 
     Adding Layer      : Top Overlay
+
+    Adding Layer      : Mechanical 1
 
 
 Used DCodes :
@@ -218,5 +185,48 @@ Used DCodes :
     D16
     D17
     D18
+    D19
+*************************************************************
+
+*************************************************************
+Generating : Top Layer
+      File : BuckBoostPCB.GTL
+
+    Adding Layer      : Top Layer
+
+    Adding Layer      : Mechanical 1
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D19
+    D20
+    D21
+    D22
+    D23
+    D24
+    D25
+    D26
+    D27
+    D28
+    D29
+    D30
+    D31
+    D32
+    D33
+    D34
+    D58
+    D59
+    D60
+    D61
+    D62
+    D63
+    D64
+    D65
+    D66
+    D67
+    D68
+    D69
 *************************************************************
 
