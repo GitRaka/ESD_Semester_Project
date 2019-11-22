@@ -70,9 +70,13 @@ void initSystemClocks(void) {
     MAP_FlashCtl_setWaitState(FLASH_BANK1, 1);
     CS_startHFXT(false);
 
-    /* Initializing MCLK to HFXT (effectively 48MHz) */
-    MAP_CS_initClockSignal(CS_MCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
-    //![Simple CS Config]
+    //Setting the reference oscillator frequency to 128kHz
+    MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);
+
+    /* Initializing SMCLK to HFXT (effectively 48MHz) */
+    MAP_CS_initClockSignal(CS_SMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
+    /* Initializing MCLK to 1/2 REFO ~64kHz */
+    MAP_CS_initClockSignal(CS_MCLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_2);
 
     /* Configuring SysTick to trigger at 12000000 (MCLK is 48MHz so this will
      * make it toggle every 0.25s) */
