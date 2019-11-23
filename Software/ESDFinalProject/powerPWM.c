@@ -32,7 +32,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-/*******************************************************************************
+/*******************************************************************************/
 
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
@@ -44,8 +44,8 @@
 
 /* Application Defines */
 #define TIMER_PERIOD 1200
-#define DUTY_CYCLE1 120
-#define DUTY_CYCLE2 1080
+#define DUTY_CYCLE_N (TIMER_PERIOD-840)
+#define DUTY_CYCLE_P (DUTY_CYCLE_N-50)
 
 /* Timer_A UpDown Configuration Parameter */
 const Timer_A_UpDownModeConfig upDownConfig =
@@ -64,8 +64,8 @@ const Timer_A_CompareModeConfig compareConfig_PWM1 =
 {
         TIMER_A_CAPTURECOMPARE_REGISTER_1,          // Use CCR1
         TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
-        TIMER_A_OUTPUTMODE_TOGGLE_SET,              // Toggle output but
-        DUTY_CYCLE1                                 // 32 Duty Cycle
+        TIMER_A_OUTPUTMODE_TOGGLE_SET,              // Toggle output
+        DUTY_CYCLE_N
 };
 
 /* Timer_A Compare Configuration Parameter (PWM2) */
@@ -73,8 +73,26 @@ const Timer_A_CompareModeConfig compareConfig_PWM2 =
 {
         TIMER_A_CAPTURECOMPARE_REGISTER_2,          // Use CCR2
         TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
-        TIMER_A_OUTPUTMODE_TOGGLE_SET,              // Toggle output but
-        DUTY_CYCLE2                                 // 96 Duty Cycle
+        TIMER_A_OUTPUTMODE_TOGGLE_SET,              // Toggle output
+        DUTY_CYCLE_P
+};
+
+/* Timer_A Compare Configuration Parameter (PWM3) */
+const Timer_A_CompareModeConfig compareConfig_PWM3 =
+{
+        TIMER_A_CAPTURECOMPARE_REGISTER_3,          // Use CCR3
+        TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
+        TIMER_A_OUTPUTMODE_TOGGLE_SET,              // Toggle output
+        0
+};
+
+/* Timer_A Compare Configuration Parameter (PWM4) */
+const Timer_A_CompareModeConfig compareConfig_PWM4 =
+{
+        TIMER_A_CAPTURECOMPARE_REGISTER_4,          // Use CCR4
+        TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
+        TIMER_A_OUTPUTMODE_TOGGLE_SET,              // Toggle output
+        0
 };
 
 void initPowerPWM(void) {

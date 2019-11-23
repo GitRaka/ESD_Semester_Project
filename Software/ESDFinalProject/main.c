@@ -23,7 +23,7 @@ int main(void)
     initSystemClocks();
     initPowerPWM();
 
-    /* Sleeping when not in use */
+
     while (1)
     {
         //MAP_PCM_gotoLPM0();

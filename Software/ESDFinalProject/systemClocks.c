@@ -78,10 +78,10 @@ void initSystemClocks(void) {
     /* Initializing MCLK to 1/2 REFO ~64kHz */
     MAP_CS_initClockSignal(CS_MCLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_2);
 
-    /* Configuring SysTick to trigger at 12000000 (MCLK is 48MHz so this will
+    /* Configuring SysTick to trigger at 16000 (MCLK is 64kHz so this will
      * make it toggle every 0.25s) */
     MAP_SysTick_enableModule();
-    MAP_SysTick_setPeriod(12000000);
+    MAP_SysTick_setPeriod(16000);
     MAP_SysTick_enableInterrupt();
 
 
