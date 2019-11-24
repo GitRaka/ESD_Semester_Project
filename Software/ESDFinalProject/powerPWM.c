@@ -32,7 +32,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
-/*******************************************************************************/
+/* **************************************************************************** */
 
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
@@ -41,6 +41,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "powerPWM.h"
+#include "adc.h"
 
 /* Application Defines */
 #define TIMER_PERIOD 1200
@@ -52,7 +53,7 @@ const Timer_A_UpDownModeConfig upDownConfig =
 {
         TIMER_A_CLOCKSOURCE_SMCLK,              // SMCLK Clock SOurce
         TIMER_A_CLOCKSOURCE_DIVIDER_1,          // SMCLK/1 = 3MHz
-        TIMER_PERIOD,                           // 127 tick period
+        TIMER_PERIOD,                           // tick period
         TIMER_A_TAIE_INTERRUPT_DISABLE,         // Disable Timer interrupt
         TIMER_A_CCIE_CCR0_INTERRUPT_DISABLE,    // Disable CCR0 interrupt
         TIMER_A_DO_CLEAR                        // Clear value
@@ -83,7 +84,7 @@ const Timer_A_CompareModeConfig compareConfig_PWM3 =
         TIMER_A_CAPTURECOMPARE_REGISTER_3,          // Use CCR3
         TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
         TIMER_A_OUTPUTMODE_TOGGLE_SET,              // Toggle output
-        0
+        TIMER_PERIOD
 };
 
 /* Timer_A Compare Configuration Parameter (PWM4) */
@@ -92,7 +93,7 @@ const Timer_A_CompareModeConfig compareConfig_PWM4 =
         TIMER_A_CAPTURECOMPARE_REGISTER_4,          // Use CCR4
         TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
         TIMER_A_OUTPUTMODE_TOGGLE_SET,              // Toggle output
-        0
+        TIMER_PERIOD
 };
 
 void initPowerPWM(void) {
@@ -110,8 +111,21 @@ void initPowerPWM(void) {
 
     /* Initialize compare registers to generate PWM1 */
     MAP_Timer_A_initCompare(TIMER_A0_BASE, &compareConfig_PWM1);
-
-    /* Initialize compare registers to generate PWM2 */
     MAP_Timer_A_initCompare(TIMER_A0_BASE, &compareConfig_PWM2);
+    MAP_Timer_A_initCompare(TIMER_A0_BASE, &compareConfig_PWM3);
+    MAP_Timer_A_initCompare(TIMER_A0_BASE, &compareConfig_PWM4);
+
+    MAP_Timer_A_enableCaptureCompareInterrupt(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_0);
+
+    MAP_Interrupt_enableInterrupt(INT_TA0_0);
+}
+
+
+void TA0_0_IRQHandler(void) {
+    MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P10, GPIO_PIN2);
+    startADCCapture();          //Very important that this is the only place starting an ADC capture is performed!
+    MAP_Timer_A_clearCaptureCompareInterrupt(TIMER_A0_BASE,
+        TIMER_A_CAPTURECOMPARE_REGISTER_0);
+
 
 }
