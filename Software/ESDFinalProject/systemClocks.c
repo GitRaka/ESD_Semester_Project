@@ -73,15 +73,19 @@ void initSystemClocks(void) {
     //Setting the reference oscillator frequency to 128kHz
     MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);
 
+
+    /* Initializing MCLK to 48MHz - Master Clock*/
+    MAP_CS_initClockSignal(CS_MCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
+    /* Initializing HSMCLK to HFXT (effectively 48MHz) */
+    MAP_CS_initClockSignal(CS_HSMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
     /* Initializing SMCLK to HFXT (effectively 48MHz) */
     MAP_CS_initClockSignal(CS_SMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
-    /* Initializing MCLK to 1/2 REFO ~64kHz */
-    MAP_CS_initClockSignal(CS_MCLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_2);
 
-    /* Configuring SysTick to trigger at 16000 (MCLK is 64kHz so this will
+
+    /* Configuring SysTick to trigger at 12000000 (MCLK is 48MHz so this will
      * make it toggle every 0.25s) */
     MAP_SysTick_enableModule();
-    MAP_SysTick_setPeriod(16000);
+    MAP_SysTick_setPeriod(12000000);
     MAP_SysTick_enableInterrupt();
 
 

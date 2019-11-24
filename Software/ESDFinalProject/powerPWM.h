@@ -8,6 +8,9 @@
 #ifndef POWERPWM_H_
 #define POWERPWM_H_
 
+
 void initPowerPWM(void);
+void incrementDutyCycle(void);
+void decrementDutyCycle(void);
 
 #endif /* POWERPWM_H_ */
