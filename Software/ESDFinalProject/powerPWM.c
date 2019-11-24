@@ -50,17 +50,27 @@
  */
 volatile bool changeDutyCycleFlag = true;
 
+#define CLOSED_LOOP
+
 /* Application Defines */
-#define TIMER_PERIOD 1200               //Sets 20kHz power supply
-#define DUTY_CYCLE_N (TIMER_PERIOD-840) //70% duty cycle to start
-#define DUTY_CYCLE_P (DUTY_CYCLE_N-50)  //1us deadtime on both sides.
-#define CYCLE_COUNT_MAX     10
+#define TIMER_PERIOD            1200                                //count of 1200 = period of 50us or 20kHz
+#define DEADTIME                50                                  //Deadtime count of 50 = 1us on the front and back end, 2us total.
+#ifdef CLOSED_LOOP
+#define STARTING_DUTY_CYCLE     0.1                                 //starting duty cycle
+#else
+#define STARTING_DUTY_CYCLE     0.7                                 //starting duty cycle
+#endif
+#define CYCLE_COUNT_MAX         10                                  //Number of cycles between actions (adjusting output voltage, current, etc)
+
+#define DUTY_CYCLE_N            (TIMER_PERIOD - (TIMER_PERIOD*STARTING_DUTY_CYCLE)) //duty cycle to start
+#define DUTY_CYCLE_P            (DUTY_CYCLE_N-50)                   //1us deadtime on both sides.
+
 
 /* Timer_A UpDown Configuration Parameter */
-const Timer_A_UpDownModeConfig upDownConfig =
+Timer_A_UpDownModeConfig upDownConfig =
 {
         TIMER_A_CLOCKSOURCE_SMCLK,              // SMCLK Clock SOurce
-        TIMER_A_CLOCKSOURCE_DIVIDER_1,          // SMCLK/1 = 3MHz
+        TIMER_A_CLOCKSOURCE_DIVIDER_1,          // SMCLK/1 = 48MHz
         TIMER_PERIOD,                           // tick period
         TIMER_A_TAIE_INTERRUPT_DISABLE,         // Disable Timer interrupt
         TIMER_A_CCIE_CCR0_INTERRUPT_DISABLE,    // Disable CCR0 interrupt
@@ -69,7 +79,7 @@ const Timer_A_UpDownModeConfig upDownConfig =
 };
 
 /* Timer_A Compare Configuration Parameter  (PWM1) */
-const Timer_A_CompareModeConfig compareConfig_PWM1 =
+Timer_A_CompareModeConfig compareConfig_PWM1 =
 {
         TIMER_A_CAPTURECOMPARE_REGISTER_1,          // Use CCR1
         TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
@@ -78,7 +88,7 @@ const Timer_A_CompareModeConfig compareConfig_PWM1 =
 };
 
 /* Timer_A Compare Configuration Parameter (PWM2) */
-const Timer_A_CompareModeConfig compareConfig_PWM2 =
+Timer_A_CompareModeConfig compareConfig_PWM2 =
 {
         TIMER_A_CAPTURECOMPARE_REGISTER_2,          // Use CCR2
         TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
@@ -87,7 +97,7 @@ const Timer_A_CompareModeConfig compareConfig_PWM2 =
 };
 
 /* Timer_A Compare Configuration Parameter (PWM3) */
-const Timer_A_CompareModeConfig compareConfig_PWM3 =
+Timer_A_CompareModeConfig compareConfig_PWM3 =
 {
         TIMER_A_CAPTURECOMPARE_REGISTER_3,          // Use CCR3
         TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
@@ -131,11 +141,25 @@ void initPowerPWM(void) {
 }
 
 void incrementDutyCycle(void) {
-    MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P10, GPIO_PIN0);
+#ifdef CLOSED_LOOP
+    if (TA0CCR1 < TIMER_PERIOD) {  //Don't set to higher values than appropriate
+        TA0CCR1 += 1;       //Adjust nMOS capture compare register directly
+        TA0CCR2 += 1;       //Adjust pMOS capture compare register directly
+    }
+#endif
+    MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P10, GPIO_PIN0);
+    MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P10, GPIO_PIN1);
 }
 
 void decrementDutyCycle(void) {
-    MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P10, GPIO_PIN1);
+#ifdef CLOSED_LOOP
+    if (TA0CCR2 > 0) {      //Minimum Pulse Width
+        TA0CCR2 -= 1;       //Adjust pMOS capture compare register directly
+        TA0CCR1 -= 1;       //Adjust nMOS capture compare register directly
+    }
+#endif
+    MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P10, GPIO_PIN1);
+    MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P10, GPIO_PIN0);
 }
 
 
