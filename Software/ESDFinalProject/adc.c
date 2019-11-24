@@ -15,7 +15,7 @@
 #include "adc.h"
 
 #define NUM_ADC_CHANNELS    8       //Number of adc channels to measure
-#define MAX_SAMPLES         16      //Number of samples to return with request
+#define MAX_SAMPLES         8       //Number of samples to return with request
 
 #define ADC_BATT_V  GPIO_PIN7       //A6    P4.7
 #define ADC_BATT_I  GPIO_PIN6       //A7    P4.6
@@ -119,8 +119,18 @@ void serviceADC(void) {
 
 void startADCCapture (void) {
     /* Triggering the start of the sample */
-    //MAP_ADC14_enableConversion();
     MAP_ADC14_toggleConversionTrigger();
+}
+
+uint16_t getVoltage (ADC_CHANNEL channel) {
+    uint8_t i;
+    uint32_t voltage = 0;
+
+    for (i=0; i<MAX_SAMPLES; i++) {
+        voltage += datamem[channel][i];
+    }
+
+    return (voltage / MAX_SAMPLES);
 }
 
 /* This interrupt is fired whenever a conversion is completed and placed in
@@ -136,13 +146,9 @@ void ADC14_IRQHandler(void)
     if(status & ADC_INT7) {
         MAP_ADC14_getMultiSequenceResult(resultsBuffer);
         adc_conversion_complete_flag = true;
-        MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P10, GPIO_PIN0);
     }
 
     if(status & ADC_OV_INT) {
-        MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P10, GPIO_PIN1);
+        while(1);
     }
-
-
-
 }

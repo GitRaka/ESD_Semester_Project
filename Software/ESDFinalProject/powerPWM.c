@@ -43,10 +43,18 @@
 #include "powerPWM.h"
 #include "adc.h"
 
+/* Externally available variables*/
+/* Name: changeDutyCycleFlag
+ * Use: Indicates that it is time to change the PWM duty cycle because CYCLE_COUNT_MAX
+ *      has been exceeded.  Must be cleared by external software.
+ */
+volatile bool changeDutyCycleFlag = true;
+
 /* Application Defines */
-#define TIMER_PERIOD 1200
-#define DUTY_CYCLE_N (TIMER_PERIOD-840)
-#define DUTY_CYCLE_P (DUTY_CYCLE_N-50)
+#define TIMER_PERIOD 1200               //Sets 20kHz power supply
+#define DUTY_CYCLE_N (TIMER_PERIOD-840) //70% duty cycle to start
+#define DUTY_CYCLE_P (DUTY_CYCLE_N-50)  //1us deadtime on both sides.
+#define CYCLE_COUNT_MAX     10
 
 /* Timer_A UpDown Configuration Parameter */
 const Timer_A_UpDownModeConfig upDownConfig =
@@ -96,6 +104,8 @@ const Timer_A_CompareModeConfig compareConfig_PWM4 =
         TIMER_PERIOD
 };
 
+
+
 void initPowerPWM(void) {
 
     /* Configuring GPIO2.4 as peripheral output for PWM  and P6.7 for button
@@ -120,12 +130,28 @@ void initPowerPWM(void) {
     MAP_Interrupt_enableInterrupt(INT_TA0_0);
 }
 
+void incrementDutyCycle(void) {
+    MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P10, GPIO_PIN0);
+}
+
+void decrementDutyCycle(void) {
+    MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P10, GPIO_PIN1);
+}
+
 
 void TA0_0_IRQHandler(void) {
+    static uint8_t cycleCount = 0;
+
     MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P10, GPIO_PIN2);
-    startADCCapture();          //Very important that this is the only place starting an ADC capture is performed!
+
+    if (++cycleCount == CYCLE_COUNT_MAX) {
+        changeDutyCycleFlag = true;        //CYCLE_COUNT_MAX cycles have happened, time to change duty cycle
+        cycleCount = 0;
+    }
+
+    startADCCapture();          //Very important that this is the only place starting an ADC capture is performed
+                                // to keep sync
     MAP_Timer_A_clearCaptureCompareInterrupt(TIMER_A0_BASE,
         TIMER_A_CAPTURECOMPARE_REGISTER_0);
-
 
 }

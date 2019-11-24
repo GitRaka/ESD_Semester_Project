@@ -8,6 +8,8 @@
 #ifndef ADC_H_
 #define ADC_H_
 
+#include <stdint.h>
+
 typedef enum adc_channel {
     battV,
     battI,
@@ -22,6 +24,7 @@ typedef enum adc_channel {
 void initADC (void);
 void serviceADC (void);
 void startADCCapture (void);
+uint16_t getVoltage (ADC_CHANNEL channel);
 
 
 
