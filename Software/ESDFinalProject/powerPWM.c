@@ -1,5 +1,15 @@
-//timer_a_updown_compare_multiple_pwm.c
-
+/*
+ * Name: powerPWM.c
+ * Author: Jerome Hittle
+ * Tools Used: Code Composer Studio 9.2.0
+ * Leveraged Code:  timer_a_updown_compare_multiple_pwm.c
+ * Links:
+ *
+ * (c) j. hittle 2019 - All rights reserved.
+ * This file may not be reused, shared, or copied without written permission
+ *   of the author for any reason, except where applicable by law.  The
+ *   author retains all rights to the intellectual property herein.
+ */
 
 /* --COPYRIGHT--,BSD
  * Copyright (c) 2017, Texas Instruments Incorporated
@@ -45,12 +55,14 @@
 
 /* Externally available variables*/
 /* Name: changeDutyCycleFlag
- * Use: Indicates that it is time to change the PWM duty cycle because CYCLE_COUNT_MAX
- *      has been exceeded.  Must be cleared by external software.
+ * Use: Indicates that it is time to change the PWM duty cycle because the number
+ *      of switching cycles has exceeded CYCLE_COUNT_MAX.  Must be cleared by
+ *      external software.
  */
 volatile bool changeDutyCycleFlag = true;
 
-#define CLOSED_LOOP
+#define CLOSED_LOOP     //Specifies closed loop operation, comment out to define open
+                        //  loop operation
 
 /* Application Defines */
 #define TIMER_PERIOD            1200                                //count of 1200 = period of 50us or 20kHz
@@ -169,12 +181,13 @@ void TA0_0_IRQHandler(void) {
     MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P10, GPIO_PIN2);
 
     if (++cycleCount == CYCLE_COUNT_MAX) {
-        changeDutyCycleFlag = true;        //CYCLE_COUNT_MAX cycles have happened, time to change duty cycle
+        changeDutyCycleFlag = true;        //CYCLE_COUNT_MAX cycles has happened, time to change duty cycle
         cycleCount = 0;
     }
 
     startADCCapture();          //Very important that this is the only place starting an ADC capture is performed
-                                // to keep sync
+                                //      to keep sync
+
     MAP_Timer_A_clearCaptureCompareInterrupt(TIMER_A0_BASE,
         TIMER_A_CAPTURECOMPARE_REGISTER_0);
 

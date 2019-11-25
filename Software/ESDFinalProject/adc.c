@@ -1,11 +1,11 @@
 /*
+ * Name: adc.c
+ * Author: Jerome Hittle
+ * Tools Used: CCS
+ * Leveraged Code:  TI SimpleLink v3.30.00.13, MSP432P401R DriverLib Examples:
+ *              adc14_multiple_channel_no_repeat.c
+ * Links:
  *
- *
- * Based on adc14_multiple_channel_no_repeat.c
- * adc.c
- *
- *  Created on: Nov 23, 2019
- *      Author: Jerome
  */
 
 

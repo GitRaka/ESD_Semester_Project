@@ -1,8 +1,14 @@
 /*
- * powerSupply.c
+ * Name: powerSupply.c
+ * Author: Jerome Hittle
+ * Tools Used: Code Composer Studio 9.2.0
+ * Leveraged Code:
+ * Links:
  *
- *  Created on: Nov 23, 2019
- *      Author: Jerome
+ * (c) j. hittle 2019 - All rights reserved.
+ * This file may not be reused, shared, or copied without written permission
+ *   of the author for any reason, except where applicable by law.  The
+ *   author retains all rights to the intellectual property herein.
  */
 
 /* DriverLib Includes */
@@ -23,13 +29,29 @@ extern bool changeDutyCycleFlag;
 
 void initPowerSupply(void) {
 
-    initPowerPWM();
-    //Port10.0 thru Port10.5 used for debug.
-
     //Turn Off Linear Regulator - I have concerns about the Linear regulator working properly
     //      Need to be careful about using this.  For now, keep output voltage constant.
     MAP_GPIO_setAsOutputPin(GPIO_PORT_P3, GPIO_PIN0 );
     MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN0 );
+
+    //Port10.0 thru Port10.5 used for debug.
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P10,
+                            GPIO_PIN0 |
+                            GPIO_PIN1 |
+                            GPIO_PIN2 |
+                            GPIO_PIN3 |
+                            GPIO_PIN4 |
+                            GPIO_PIN5 );
+    MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P10,
+                            GPIO_PIN0 |
+                            GPIO_PIN1 |
+                            GPIO_PIN2 |
+                            GPIO_PIN3 |
+                            GPIO_PIN4 |
+                            GPIO_PIN5 );
+
+
+    initPowerPWM();
 
 }
 
