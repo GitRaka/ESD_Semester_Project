@@ -25,25 +25,26 @@
 void initPowerPWM(void);
 
 /*
- *  Function Name: incrementDutyCycle
- *  Function Description: Increments the duty cycle of the power supply
+ *  Function Name: incrementBoostDutyCycle
+ *  Function Description: Increments the duty cycle of the power supply in boost mode
  *      by one step of resolution.
  *  Inputs:  none
  *  Outputs: none
  *  Author: Jerome Hittle
  *  Last updated: 11/25/2019
  */
-void incrementDutyCycle(void);
+void incrementBoostDutyCycle(void);
 
 /*
- *  Function Name: decrementDutyCycle
- *  Function Description: Decrements the duty cycle of the power supply
+ *  Function Name: decrementBoostDutyCycle
+ *  Function Description: Decrements the duty cycle of the power supply in boost mode
  *      by one step of resolution.
  *  Inputs:  none
- *  Outputs: none
+ *  Outputs: Returns the current count of the duty cycle as a function of the period counts.
+ *      example: if the period is 1200 counts and the nMOS count is 1150, returns 50.
  *  Author: Jerome Hittle
  *  Last updated: 11/25/2019
  */
-void decrementDutyCycle(void);
+uint16_t decrementBoostDutyCycle(void);
 
 #endif /* POWERPWM_H_ */

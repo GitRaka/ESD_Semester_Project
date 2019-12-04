@@ -74,8 +74,9 @@ volatile bool changeDutyCycleFlag = true;
 #endif
 #define CYCLE_COUNT_MAX         10                                  //Number of cycles between actions (adjusting output voltage, current, etc)
 
-#define DUTY_CYCLE_N            (TIMER_PERIOD - (TIMER_PERIOD*STARTING_DUTY_CYCLE)) //duty cycle to start
-#define DUTY_CYCLE_P            (DUTY_CYCLE_N-50)                   //1us deadtime on both sides.
+#define DEADTIME                50                                  //1us deadtime on both sides.
+#define DUTY_CYCLE_N            (TIMER_PERIOD - (TIMER_PERIOD * STARTING_DUTY_CYCLE)) //duty cycle to start
+#define DUTY_CYCLE_P            (DUTY_CYCLE_N - DEADTIME)
 
 
 /* Timer_A UpDown Configuration Parameter */
@@ -152,32 +153,66 @@ void initPowerPWM(void) {
     MAP_Interrupt_enableInterrupt(INT_TA0_0);
 }
 
-void incrementDutyCycle(void) {
+uint16_t decrementBoostDutyCycle(void) {
 #ifdef CLOSED_LOOP
     if (TA0CCR1 < TIMER_PERIOD) {  //Don't set to higher values than appropriate
-        TA0CCR1 += 1;       //Adjust nMOS capture compare register directly
-        TA0CCR2 += 1;       //Adjust pMOS capture compare register directly
+        //Incrementing the CC registers reduces the time that the pair of nMOS/pMOS
+        //  is driving the switching node low - in this way, it's actually decrementing
+        //  the duty cycle by incrementing the count level
+        TA0CCR1 += 1;                           //Adjust nMOS capture compare register directly
+        TA0CCR2 = TA0CCR1 - DEADTIME;   //Adjust pMOS capture compare register directly
+        TA0CCR3 = TIMER_PERIOD;                 //Make sure Buck nMOS is OFF
+        TA0CCR4 = TIMER_PERIOD;                 //Make sure Buck pMOS is ON
     }
 #endif
+    // Set P10.0 high to indicate Boost duty cycle is being decremented
     MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P10, GPIO_PIN0);
-    MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P10, GPIO_PIN1);
+    MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P10, GPIO_PIN1 | GPIO_PIN3 | GPIO_PIN4 );
+
+    return ( TIMER_PERIOD - TA0CCR1 );
 }
 
-void decrementDutyCycle(void) {
+void incrementBoostDutyCycle(void) {
 #ifdef CLOSED_LOOP
     if (TA0CCR2 > 0) {      //Minimum Pulse Width
-        TA0CCR2 -= 1;       //Adjust pMOS capture compare register directly
-        TA0CCR1 -= 1;       //Adjust nMOS capture compare register directly
+        //Decrementing the CC registers increases the time that the pair of nMOS/pMOS
+        //  is driving the switching node low - in this way, it's actually incrementing
+        //  the duty cycle by decrementing the count level
+        //TA0CCR2 = TA0CCR1_mem - 1 + DEADTIME;   //Adjust pMOS capture compare register directly
+        TA0CCR2 = TA0CCR1 - DEADTIME - 1;   //Adjust pMOS capture compare register directly
+        TA0CCR1 -= 1;                           //Adjust nMOS capture compare register directly
+        TA0CCR3 = TIMER_PERIOD;                 //Make sure Buck nMOS is OFF
+        TA0CCR4 = TIMER_PERIOD;                 //Make sure Buck pMOS is ON
     }
 #endif
+    // Set P10.1 high to indicate Boost duty cycle is being incremented
+    MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P10, GPIO_PIN1);
+    MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P10, GPIO_PIN0 | GPIO_PIN3 | GPIO_PIN4 );
+}
+
+/*
+void incrementBuckDutyCycle(void) {
+#ifdef CLOSED_LOOP
+    if (TA0CCR3 > 0) {      //Minimum Pulse Width
+        //Decrementing the CC registers increases the time that the pair of nMOS/pMOS
+        //  is driving the switching node low - in this way, it's actually incrementing
+        //  the duty cycle by decrementing the count level
+        TA0CCR1 = TIMER_PERIOD;               //Adjust pMOS capture compare register directly
+        TA0CCR2 = TIMER_PERIOD;               //Adjust nMOS capture compare register directly
+        TA0CCR4 += 1;     //Make sure Buck nMOS is OFF
+        TA0CCR3 += 1;     //Make sure Buck pMOS is ON
+    }
+#endif
+    // Set P10.1 high to indicate Boost duty cycle is being incremented
     MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P10, GPIO_PIN1);
     MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P10, GPIO_PIN0);
 }
-
+*/
 
 void TA0_0_IRQHandler(void) {
     static uint8_t cycleCount = 0;
 
+    // Toggle P10.2 to indicate TA0 IRQ entered
     MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P10, GPIO_PIN2);
 
     if (++cycleCount == CYCLE_COUNT_MAX) {

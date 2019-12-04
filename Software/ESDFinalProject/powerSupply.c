@@ -27,6 +27,15 @@
 
 extern bool changeDutyCycleFlag;
 
+typedef enum powerSupplyState {
+    START,
+    BUCK,
+    BOOST,
+    PASS
+} POWER_SUPPLY_STATE;
+
+volatile POWER_SUPPLY_STATE supplyState = BOOST;
+
 void initPowerSupply(void) {
 
     //Turn Off Linear Regulator - I have concerns about the Linear regulator working properly
@@ -56,12 +65,35 @@ void initPowerSupply(void) {
 }
 
 void servicePowerSupply (void) {
+    int16_t diffV;
+    static int16_t storeV;
     if (changeDutyCycleFlag) {
-        if (getVoltage(battV) < REF_VOLTAGE ) {
-            decrementDutyCycle();
-        } else {
-            incrementDutyCycle();
+        switch (supplyState) {
+        case BOOST:
+            if (getVoltage(battV) < REF_VOLTAGE ) {
+                incrementBoostDutyCycle();
+            } else {
+                if (decrementBoostDutyCycle() == 0) {
+                    //stopBoost();
+                    storeV = getVoltage(saV);
+                    supplyState = PASS;
+                }
+            }
+            break;
+        case BUCK:
+            supplyState = PASS;
+            break;
+        case PASS:
+            //
+            diffV =  getVoltage(saV) - storeV;
+            if (diffV > 100) {
+                supplyState = BUCK;
+            } else if (diffV < -100) {
+                supplyState = BOOST;
+            }
+            break;
         }
+
         changeDutyCycleFlag = false;
     }
 }

@@ -16,7 +16,7 @@
 typedef enum adc_channel {
     battV,
     battI,
-    A8,
+    saV,
     A9,
     A10,
     A11,

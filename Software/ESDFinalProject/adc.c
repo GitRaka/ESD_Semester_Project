@@ -105,7 +105,7 @@ void serviceADC(void) {
     if(adc_conversion_complete_flag) {
         datamem[battV][i]   = resultsBuffer[battV];
         datamem[battI][i]   = resultsBuffer[battI];
-        datamem[A8][i]      = resultsBuffer[A8];
+        datamem[saV][i]     = resultsBuffer[saV];
         datamem[A9][i]      = resultsBuffer[A9];
         datamem[A10][i]     = resultsBuffer[A10];
         datamem[A11][i]     = resultsBuffer[A11];
@@ -149,6 +149,6 @@ void ADC14_IRQHandler(void)
     }
 
     if(status & ADC_OV_INT) {
-        while(1);
+        //while(1);
     }
 }
