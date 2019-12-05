@@ -12,7 +12,15 @@
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 #include "adc.h"
+
+/* Externally available variables*/
+/* Name: adcBufferFull
+ * Use: Indicates that the ADC buffer has been filled since the buffer is an average of
+ *      eight measurements.  This takes some time to fill during startup.
+ */
+volatile bool adcBufferFull = false;
 
 #define NUM_ADC_CHANNELS    8       //Number of adc channels to measure
 #define MAX_SAMPLES         8       //Number of samples to return with request
@@ -22,6 +30,7 @@
 
 static uint16_t resultsBuffer[NUM_ADC_CHANNELS];
 static uint16_t datamem[NUM_ADC_CHANNELS][MAX_SAMPLES];
+
 volatile bool adc_conversion_complete_flag = false;
 
 
@@ -112,7 +121,10 @@ void serviceADC(void) {
         datamem[A12][i]     = resultsBuffer[A12];
         datamem[A13][i]     = resultsBuffer[A13];
 
-        if (++i==MAX_SAMPLES) i = 0;
+        if (++i==MAX_SAMPLES) {
+            i = 0;
+            adcBufferFull = true;
+        }
         adc_conversion_complete_flag = false;
     }
 }
@@ -129,6 +141,7 @@ uint16_t getVoltage (ADC_CHANNEL channel) {
     for (i=0; i<MAX_SAMPLES; i++) {
         voltage += datamem[channel][i];
     }
+
 
     return (voltage / MAX_SAMPLES);
 }

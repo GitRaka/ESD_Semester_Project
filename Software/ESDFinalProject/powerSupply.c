@@ -19,22 +19,35 @@
 #include "powerPWM.h"
 #include "adc.h"
 
+//Nominal Output Voltage
 #define DESIRED_VOLTAGE     10.0
 #define DIV_RATIO           0.1760
 #define V_FEEDBACK          (DESIRED_VOLTAGE * DIV_RATIO)
 #define REF_VOLTAGE         (V_FEEDBACK / 0.000153)         //counts
 
+//Input Voltage Shutdown thresholds
+#define LO_VOLTAGE          7.0
+#define LO_V_FEEDBACK       (LO_VOLTAGE * DIV_RATIO)
+#define LO_V_TRIP           (LO_V_FEEDBACK / 0.000153)      //counts
+#define HI_VOLTAGE          15.0
+#define HI_V_FEEDBACK       (HI_VOLTAGE * DIV_RATIO)
+#define HI_V_TRIP           (HI_V_FEEDBACK / 0.000153)      //counts
+
+
+
 
 extern bool changeDutyCycleFlag;
+extern bool adcBufferFull;
 
 typedef enum powerSupplyState {
     START,
     BUCK,
     BOOST,
-    PASS
+    PASS,
+    SHUTDOWN
 } POWER_SUPPLY_STATE;
 
-volatile POWER_SUPPLY_STATE supplyState = BOOST;
+volatile POWER_SUPPLY_STATE supplyState = START;
 
 void initPowerSupply(void) {
 
@@ -61,20 +74,39 @@ void initPowerSupply(void) {
 
 
     initPowerPWM();
-
+    supplyState = START;
 }
 
 void servicePowerSupply (void) {
     int16_t diffV;
-    static int16_t storeV;
-    if (changeDutyCycleFlag) {
+    static int16_t storeV;          //Stores the voltage when BOOST or BUCK states transition to PASS
+
+
+
+    if (changeDutyCycleFlag & adcBufferFull) {
+        //Check for valid input voltage
+        if (getVoltage(saV) < LO_V_TRIP | getVoltage(saV) > HI_V_TRIP ) {
+            turnOffPowerSupply();
+            supplyState = SHUTDOWN;
+        }
+
         switch (supplyState) {
+        case START:
+            turnOffPowerSupply();
+            diffV = getVoltage(saV) - REF_VOLTAGE;  //Make best guess on which operation mode to go to
+            if (diffV > 100) {
+                supplyState = BUCK;
+            } else if (diffV < -100) {
+                supplyState = BOOST;
+            } else {
+                supplyState = PASS;
+            }
+            break;
         case BOOST:
             if (getVoltage(battV) < REF_VOLTAGE ) {
                 incrementBoostDutyCycle();
             } else {
                 if (decrementBoostDutyCycle() == 0) {
-                    //stopBoost();
                     storeV = getVoltage(saV);
                     supplyState = PASS;
                 }
@@ -91,6 +123,8 @@ void servicePowerSupply (void) {
             } else if (diffV < -100) {
                 supplyState = BOOST;
             }
+            break;
+        case SHUTDOWN:
             break;
         }
 

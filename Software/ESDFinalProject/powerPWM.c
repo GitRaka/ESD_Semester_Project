@@ -78,6 +78,13 @@ volatile bool changeDutyCycleFlag = true;
 #define DUTY_CYCLE_N            (TIMER_PERIOD - (TIMER_PERIOD * STARTING_DUTY_CYCLE)) //duty cycle to start
 #define DUTY_CYCLE_P            (DUTY_CYCLE_N - DEADTIME)
 
+#define NMOS_HARD_OFF           TIMER_PERIOD
+#define NMOS_HARD_ON            0
+#define PMOS_HARD_OFF           0
+#define PMOS_HARD_ON            TIMER_PERIOD
+
+/* local variables */
+bool powerSupplyOffFlag = true;
 
 /* Timer_A UpDown Configuration Parameter */
 Timer_A_UpDownModeConfig upDownConfig =
@@ -92,39 +99,46 @@ Timer_A_UpDownModeConfig upDownConfig =
 };
 
 /* Timer_A Compare Configuration Parameter  (PWM1) */
+/* Control for Boost NMOS Switch */
 Timer_A_CompareModeConfig compareConfig_PWM1 =
 {
         TIMER_A_CAPTURECOMPARE_REGISTER_1,          // Use CCR1
         TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
         TIMER_A_OUTPUTMODE_TOGGLE_SET,              // Toggle output
-        DUTY_CYCLE_N
+        //DUTY_CYCLE_N
+        NMOS_HARD_OFF                               // Initialize N-channel as always off
 };
 
 /* Timer_A Compare Configuration Parameter (PWM2) */
+/* Control for Boost PMOS Switch */
 Timer_A_CompareModeConfig compareConfig_PWM2 =
 {
         TIMER_A_CAPTURECOMPARE_REGISTER_2,          // Use CCR2
         TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
         TIMER_A_OUTPUTMODE_TOGGLE_SET,              // Toggle output
-        DUTY_CYCLE_P
+        //DUTY_CYCLE_P
+        PMOS_HARD_OFF                               // Initialize P-channel as always off
 };
 
 /* Timer_A Compare Configuration Parameter (PWM3) */
+/* Control for Buck NMOS Switch */
 Timer_A_CompareModeConfig compareConfig_PWM3 =
 {
         TIMER_A_CAPTURECOMPARE_REGISTER_3,          // Use CCR3
         TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
         TIMER_A_OUTPUTMODE_TOGGLE_SET,              // Toggle output
-        TIMER_PERIOD
+        //TIMER_PERIOD
+        NMOS_HARD_OFF                               // Initialize N-channel as always off
 };
 
 /* Timer_A Compare Configuration Parameter (PWM4) */
+/* Control for Buck PMOS Switch */
 const Timer_A_CompareModeConfig compareConfig_PWM4 =
 {
         TIMER_A_CAPTURECOMPARE_REGISTER_4,          // Use CCR4
         TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
         TIMER_A_OUTPUTMODE_TOGGLE_SET,              // Toggle output
-        TIMER_PERIOD
+        PMOS_HARD_OFF                               // Initialize P-channel as always off
 };
 
 
@@ -150,7 +164,16 @@ void initPowerPWM(void) {
 
     MAP_Timer_A_enableCaptureCompareInterrupt(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_0);
 
-    MAP_Interrupt_enableInterrupt(INT_TA0_0);
+    MAP_Interrupt_enableInterrupt(INT_TA0_0);       //Interrupt when the count up-down timer reaches its peak
+}
+
+void turnOffPowerSupply (void) {
+    TA0CCR1 = NMOS_HARD_OFF;                    //Adjust nMOS capture compare register directly
+    TA0CCR2 = PMOS_HARD_OFF;                    //Adjust pMOS capture compare register directly
+    TA0CCR3 = NMOS_HARD_OFF;                    //Ensure Buck nMOS is OFF
+    TA0CCR4 = PMOS_HARD_OFF;                    //Ensure Buck pMOS is OFF
+
+    powerSupplyOffFlag = true;
 }
 
 uint16_t decrementBoostDutyCycle(void) {
@@ -160,9 +183,9 @@ uint16_t decrementBoostDutyCycle(void) {
         //  is driving the switching node low - in this way, it's actually decrementing
         //  the duty cycle by incrementing the count level
         TA0CCR1 += 1;                           //Adjust nMOS capture compare register directly
-        TA0CCR2 = TA0CCR1 - DEADTIME;   //Adjust pMOS capture compare register directly
-        TA0CCR3 = TIMER_PERIOD;                 //Make sure Buck nMOS is OFF
-        TA0CCR4 = TIMER_PERIOD;                 //Make sure Buck pMOS is ON
+        TA0CCR2 = TA0CCR1 - DEADTIME;           //Adjust pMOS capture compare register directly
+        TA0CCR3 = NMOS_HARD_OFF;                //Ensure Buck nMOS is OFF
+        TA0CCR4 = PMOS_HARD_ON;                 //Ensure Buck pMOS is ON
     }
 #endif
     // Set P10.0 high to indicate Boost duty cycle is being decremented
@@ -174,15 +197,16 @@ uint16_t decrementBoostDutyCycle(void) {
 
 void incrementBoostDutyCycle(void) {
 #ifdef CLOSED_LOOP
-    if (TA0CCR2 > 0) {      //Minimum Pulse Width
+    if ( TA0CCR2 > 0 | powerSupplyOffFlag ) {      //Minimum Pulse Width
         //Decrementing the CC registers increases the time that the pair of nMOS/pMOS
         //  is driving the switching node low - in this way, it's actually incrementing
         //  the duty cycle by decrementing the count level
-        //TA0CCR2 = TA0CCR1_mem - 1 + DEADTIME;   //Adjust pMOS capture compare register directly
-        TA0CCR2 = TA0CCR1 - DEADTIME - 1;   //Adjust pMOS capture compare register directly
+        TA0CCR2 = TA0CCR1 - DEADTIME - 1;       //Adjust pMOS capture compare register directly
         TA0CCR1 -= 1;                           //Adjust nMOS capture compare register directly
-        TA0CCR3 = TIMER_PERIOD;                 //Make sure Buck nMOS is OFF
-        TA0CCR4 = TIMER_PERIOD;                 //Make sure Buck pMOS is ON
+        TA0CCR3 = NMOS_HARD_OFF;                //Ensure Buck nMOS is OFF
+        TA0CCR4 = PMOS_HARD_ON;                 //Ensure Buck pMOS is ON
+
+        powerSupplyOffFlag = false;
     }
 #endif
     // Set P10.1 high to indicate Boost duty cycle is being incremented

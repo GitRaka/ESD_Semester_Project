@@ -64,7 +64,4 @@ void startADCCapture (void);
  */
 uint16_t getVoltage (ADC_CHANNEL channel);
 
-
-
-
 #endif /* ADC_H_ */

@@ -25,6 +25,16 @@
 void initPowerPWM(void);
 
 /*
+ *  Function Name: turnOffPowerSupply
+ *  Function Description: Turns off all of the switches on the power supply
+ *  Inputs:  none
+ *  Outputs: none
+ *  Author: Jerome Hittle
+ *  Last updated: 12/4/2019
+ */
+void turnOffPowerSupply (void);
+
+/*
  *  Function Name: incrementBoostDutyCycle
  *  Function Description: Increments the duty cycle of the power supply in boost mode
  *      by one step of resolution.
