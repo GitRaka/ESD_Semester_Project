@@ -33,9 +33,6 @@
 #define HI_V_FEEDBACK       (HI_VOLTAGE * DIV_RATIO)
 #define HI_V_TRIP           (HI_V_FEEDBACK / 0.000153)      //counts
 
-
-
-
 extern bool changeDutyCycleFlag;
 extern bool adcBufferFull;
 
@@ -75,13 +72,12 @@ void initPowerSupply(void) {
 
     initPowerPWM();
     supplyState = START;
+    //supplyState = BUCK;
 }
 
 void servicePowerSupply (void) {
     int16_t diffV;
     static int16_t storeV;          //Stores the voltage when BOOST or BUCK states transition to PASS
-
-
 
     if (changeDutyCycleFlag & adcBufferFull) {
         //Check for valid input voltage
@@ -103,7 +99,7 @@ void servicePowerSupply (void) {
             }
             break;
         case BOOST:
-            if (getVoltage(battV) < REF_VOLTAGE ) {
+            if ( getVoltage(battV) < REF_VOLTAGE ) {
                 incrementBoostDutyCycle();
             } else {
                 if (decrementBoostDutyCycle() == 0) {
@@ -113,7 +109,15 @@ void servicePowerSupply (void) {
             }
             break;
         case BUCK:
-            supplyState = PASS;
+            if ( getVoltage(battV) < REF_VOLTAGE ) {
+                decrementBuckDutyCycle();
+            } else {
+                if (incrementBuckDutyCycle() == 0) {
+                    storeV = getVoltage(saV);
+                    supplyState = PASS;
+                }
+            }
+            //supplyState = PASS;
             break;
         case PASS:
             //

@@ -57,4 +57,8 @@ void incrementBoostDutyCycle(void);
  */
 uint16_t decrementBoostDutyCycle(void);
 
+uint16_t incrementBuckDutyCycle(void);
+void decrementBuckDutyCycle(void);
+
+
 #endif /* POWERPWM_H_ */
