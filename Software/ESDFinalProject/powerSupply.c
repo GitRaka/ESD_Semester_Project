@@ -119,7 +119,7 @@ void servicePowerSupply (void) {
             }
             break;
         case PASS:
-            //
+            passMode();
             diffV =  getVoltage(saV) - storeV;
             if (diffV > 100) {
                 supplyState = BUCK;

@@ -176,6 +176,13 @@ void turnOffPowerSupply (void) {
     powerSupplyOffFlag = true;
 }
 
+void passMode (void) {
+    TA0CCR1 = NMOS_HARD_OFF;                    //Adjust nMOS capture compare register directly
+    TA0CCR2 = PMOS_HARD_ON;                    //Adjust pMOS capture compare register directly
+    TA0CCR3 = NMOS_HARD_OFF;                    //Ensure Buck nMOS is OFF
+    TA0CCR4 = PMOS_HARD_ON;                    //Ensure Buck pMOS is OFF
+}
+
 uint16_t decrementBoostDutyCycle(void) {
 #ifdef CLOSED_LOOP
     if (TA0CCR1 < TIMER_PERIOD) {  //Don't set to higher values than appropriate

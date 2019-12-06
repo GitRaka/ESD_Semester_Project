@@ -34,6 +34,8 @@ void initPowerPWM(void);
  */
 void turnOffPowerSupply (void);
 
+void passMode (void);
+
 /*
  *  Function Name: incrementBoostDutyCycle
  *  Function Description: Increments the duty cycle of the power supply in boost mode
