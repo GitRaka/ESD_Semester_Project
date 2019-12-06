@@ -90,9 +90,9 @@ void servicePowerSupply (void) {
         case START:
             turnOffPowerSupply();
             diffV = getVoltage(saV) - REF_VOLTAGE;  //Make best guess on which operation mode to go to
-            if (diffV > 100) {
+            if (diffV > 20) {
                 supplyState = BUCK;
-            } else if (diffV < -100) {
+            } else if (diffV < -20) {
                 supplyState = BOOST;
             } else {
                 supplyState = PASS;
@@ -116,10 +116,6 @@ void servicePowerSupply (void) {
                 }
             } else {
                 incrementBuckDutyCycle();
-                //if (incrementBuckDutyCycle() == 0) {
-                //    storeV = getVoltage(saV);
-                //    supplyState = PASS;
-                //}
             }
             break;
         case PASS:

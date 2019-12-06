@@ -226,6 +226,11 @@ uint16_t decrementBuckDutyCycle(void) {
         TA0CCR4 = TA0CCR3 - DEADTIME;          //Adjust pMOS capture compare register directly
         TA0CCR1 = NMOS_HARD_OFF;               //Make sure Boost nMOS is OFF
         TA0CCR2 = PMOS_HARD_ON;                //Make sure Boost pMOS is ON
+    } else if (powerSupplyOffFlag) {
+        //Note this is handled differently than in the boost case to startup because
+        //  the duty cycle needs to count up!
+        //  Need to kickstart the power supply by incrementing the duty cycle!
+        incrementBuckDutyCycle();
     }
 #endif
     // Set P10.2 high to indicate Boost duty cycle is being incremented
