@@ -215,7 +215,7 @@ void incrementBoostDutyCycle(void) {
 }
 
 
-void decrementBuckDutyCycle(void) {
+uint16_t decrementBuckDutyCycle(void) {
 #ifdef CLOSED_LOOP
     if (  TA0CCR3 < TIMER_PERIOD  ) {      //Minimum Pulse Width
         //Decrementing the CC registers increases the time that the pair of nMOS/pMOS
@@ -232,10 +232,10 @@ void decrementBuckDutyCycle(void) {
     MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P10, GPIO_PIN2);
     MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P10, GPIO_PIN0 | GPIO_PIN1 | GPIO_PIN3);
 
-
+    return ( TIMER_PERIOD - TA0CCR3 );
 }
 
-uint16_t incrementBuckDutyCycle(void) {
+void incrementBuckDutyCycle(void) {
 #ifdef CLOSED_LOOP
     if (TA0CCR4 > 0 | powerSupplyOffFlag ) {      //Minimum Pulse Width
         //Decrementing the CC registers increases the time that the pair of nMOS/pMOS
@@ -256,7 +256,7 @@ uint16_t incrementBuckDutyCycle(void) {
 
     powerSupplyOffFlag = false;
 
-    return ( TIMER_PERIOD - TA0CCR3 );
+
 }
 
 void TA0_0_IRQHandler(void) {

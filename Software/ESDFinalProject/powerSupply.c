@@ -110,14 +110,17 @@ void servicePowerSupply (void) {
             break;
         case BUCK:
             if ( getVoltage(battV) < REF_VOLTAGE ) {
-                decrementBuckDutyCycle();
-            } else {
-                if (incrementBuckDutyCycle() == 0) {
+                if (decrementBuckDutyCycle() == 0) {
                     storeV = getVoltage(saV);
                     supplyState = PASS;
                 }
+            } else {
+                incrementBuckDutyCycle();
+                //if (incrementBuckDutyCycle() == 0) {
+                //    storeV = getVoltage(saV);
+                //    supplyState = PASS;
+                //}
             }
-            //supplyState = PASS;
             break;
         case PASS:
             //
