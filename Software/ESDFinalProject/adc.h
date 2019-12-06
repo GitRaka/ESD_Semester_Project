@@ -14,10 +14,10 @@
 
 //Enumerated type of the measurement on each ADC channel
 typedef enum adc_channel {
-    battV,
+    A6,
     battI,
     saV,
-    A9,
+    battV,
     A10,
     A11,
     A12,

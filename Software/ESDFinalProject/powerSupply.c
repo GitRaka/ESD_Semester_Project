@@ -29,7 +29,7 @@
 #define LO_VOLTAGE          7.0
 #define LO_V_FEEDBACK       (LO_VOLTAGE * DIV_RATIO)
 #define LO_V_TRIP           (LO_V_FEEDBACK / 0.000153)      //counts
-#define HI_VOLTAGE          15.0
+#define HI_VOLTAGE          14.0
 #define HI_V_FEEDBACK       (HI_VOLTAGE * DIV_RATIO)
 #define HI_V_TRIP           (HI_V_FEEDBACK / 0.000153)      //counts
 

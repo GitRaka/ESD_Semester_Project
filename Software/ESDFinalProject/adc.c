@@ -25,9 +25,6 @@ volatile bool adcBufferFull = false;
 #define NUM_ADC_CHANNELS    8       //Number of adc channels to measure
 #define MAX_SAMPLES         8       //Number of samples to return with request
 
-#define ADC_BATT_V  GPIO_PIN7       //A6    P4.7
-#define ADC_BATT_I  GPIO_PIN6       //A7    P4.6
-
 static uint16_t resultsBuffer[NUM_ADC_CHANNELS];
 static uint16_t datamem[NUM_ADC_CHANNELS][MAX_SAMPLES];
 
@@ -50,8 +47,8 @@ void initADC (void) {
 
     /* Configuring GPIOs for Analog In */
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P4,
-                                                   ADC_BATT_V |
-                                                   ADC_BATT_I |
+                                                   GPIO_PIN7 |
+                                                   GPIO_PIN6 |
                                                    GPIO_PIN5 |
                                                    GPIO_PIN4 |
                                                    GPIO_PIN3 |
@@ -112,10 +109,10 @@ void serviceADC(void) {
     static uint8_t i=0;
 
     if(adc_conversion_complete_flag) {
-        datamem[battV][i]   = resultsBuffer[battV];
+        datamem[A6][i]      = resultsBuffer[A6];
         datamem[battI][i]   = resultsBuffer[battI];
         datamem[saV][i]     = resultsBuffer[saV];
-        datamem[A9][i]      = resultsBuffer[A9];
+        datamem[battV][i]   = resultsBuffer[battV];
         datamem[A10][i]     = resultsBuffer[A10];
         datamem[A11][i]     = resultsBuffer[A11];
         datamem[A12][i]     = resultsBuffer[A12];
