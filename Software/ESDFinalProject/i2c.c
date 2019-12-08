@@ -28,7 +28,7 @@ const eUSCI_I2C_MasterConfig i2cConfig =
 void read_register(uint8_t i2c_register)
 {
     data = 0;
-    uint8_t temp_clr = 0;
+    //uint8_t temp_clr = 0;
     //MAP_I2C_masterSendMultiByteStart(EUSCI_B1_BASE,TXData[1]);
     MAP_I2C_masterSendMultiByteStart(EUSCI_B1_BASE,i2c_register);
     //MAP_I2C_masterSendMultiByteNext(EUSCI_B1_BASE, TXData[6]);
